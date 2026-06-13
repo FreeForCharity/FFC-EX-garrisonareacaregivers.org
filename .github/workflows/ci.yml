@@ -28,6 +28,14 @@ jobs:
           test -f site/resources.html
           test -f site/feedback.html
           test -f site/visit.html
+          test -f site/policies.html
+          test -f site/privacy-policy.html
+          test -f site/cookie-policy.html
+          test -f site/terms-of-service.html
+          test -f site/donation-policy.html
+          test -f site/free-for-charity-donation-policy.html
+          test -f site/vulnerability-disclosure-policy.html
+          test -f site/security-acknowledgements.html
           test -f site/assets/gac-home-hero.svg
           test -f site/assets/gac-front-hero.svg
           test -f site/assets/garrison-walleye-statue.svg
