@@ -2,6 +2,14 @@
 
 Single-page Next.js 16.0.7 website built with App Router for Free For Charity nonprofit organization.
 
+## 🔗 Live Site
+
+This repository is deployed to **GitHub Pages** at its production URL:
+
+**https://garrisonareacaregivers.org/**
+
+Apex custom domain served via Cloudflare DNS → GitHub Pages, with HTTPS enforced.
+
 ## 🎉 Phase 5 Implementation Complete
 
 **Status:** ✅ All critical gaps closed. Repository now has enterprise-grade tooling, comprehensive testing, and professional documentation.
