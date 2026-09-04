@@ -201,17 +201,22 @@ export default function CookieConsent() {
       const deleteMarketing = !prefs || !prefs.marketing
 
       if (deleteAnalytics) {
-        // GA4 + Microsoft Clarity
-        expireCookies(['_ga', '_gid', '_clck', '_clsk'])
+        // GA4 + Microsoft Clarity, plus every cookie matching _ga_*
+        // (e.g. _ga_G-XXXXXXXXXX), which can only be discovered at runtime.
+        //
+        // Collected into ONE expireCookies call rather than two: it walks the
+        // hostname's labels to build the domain-candidate set on every call,
+        // and that set does not depend on the names being expired, so a second
+        // call recomputes it for nothing.
+        const dynamicNames =
+          typeof document !== 'undefined'
+            ? document.cookie
+                .split(';')
+                .map((cookie) => cookie.split('=')[0].trim())
+                .filter((cookieName) => cookieName.startsWith('_ga_'))
+            : []
 
-        // Dynamically expire every cookie matching _ga_* (e.g. _ga_G-XXXXXXXXXX)
-        if (typeof document !== 'undefined') {
-          const dynamicNames = document.cookie
-            .split(';')
-            .map((cookie) => cookie.split('=')[0].trim())
-            .filter((cookieName) => cookieName.startsWith('_ga_'))
-          expireCookies(dynamicNames)
-        }
+        expireCookies(['_ga', '_gid', '_clck', '_clsk', ...dynamicNames])
       }
 
       if (deleteMarketing) {
