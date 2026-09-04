@@ -19,9 +19,19 @@ const GTM_ID = analyticsConfig.gtmId
  * rejects placeholders — nothing validates the SHAPE of what lands here.
  *
  * Deliberately local rather than imported from the cookie-consent component,
- * which exports the same helper: that module is `'use client'`, so importing
- * from it makes this a client-boundary call and breaks the build wherever
- * this component renders on the server.
+ * which exports the same helper — but NOT for a boundary reason in this file.
+ * This component is `'use client'`, so importing from another client module
+ * here would be fine, and an earlier revision of this comment claimed
+ * otherwise.
+ *
+ * It is local because the fleet is not uniform. Measured across the 34 FFC-EX
+ * forks that carry this component: one renders it on the server (no
+ * `'use client'`), where importing from the `'use client'` cookie-consent
+ * module IS a boundary call and fails the build — which is how this was
+ * found; two have no cookie-consent component at all, so there is nothing to
+ * import from; and one does not export the helper. So the import could never
+ * have been uniform, while these six self-contained lines are identical in
+ * every fork and carry no boundary semantics.
  */
 function scriptString(value: string): string {
   return JSON.stringify(value)
