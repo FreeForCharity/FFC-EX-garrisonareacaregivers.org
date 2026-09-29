@@ -1,7 +1,8 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import Footer from '../../src/components/footer'
+import { isPending, PENDING_TEXT, siteConfig } from '../../src/lib/site.config'
 
 // Extend Jest matchers
 expect.extend(toHaveNoViolations)
@@ -47,12 +48,36 @@ describe('Footer component', () => {
     expect(guidestarLink).toBeInTheDocument()
   })
 
-  it('should have email contact link', () => {
+  it('links the contact email, or shows the placeholder while it is pending', () => {
     render(<Footer />)
-    // Look for email link
     const links = screen.getAllByRole('link')
     const emailLink = links.find((link) => link.getAttribute('href')?.includes('mailto:'))
-    expect(emailLink).toBeDefined()
+    if (isPending('email')) {
+      expect(emailLink).toBeUndefined()
+      const slot = screen.getByText('E-mail').parentElement as HTMLElement
+      expect(slot).toHaveTextContent(PENDING_TEXT)
+      expect(within(slot).getByText(PENDING_TEXT).closest('a')).toBeNull()
+    } else {
+      expect(emailLink).toHaveAttribute('href', `mailto:${siteConfig.contactEmail}`)
+    }
+  })
+
+  it("renders the charity's own EIN, phone, address and Candid profile — never FFC's", () => {
+    const { container } = render(<Footer />)
+    expect(screen.getByText(`${siteConfig.name} EIN: ${siteConfig.ein}`)).toBeInTheDocument()
+    expect(container.querySelector(`a[href="tel:${siteConfig.phone.tel}"]`)).not.toBeNull()
+    for (const address of siteConfig.addresses) {
+      expect(screen.getByText(address.label)).toBeInTheDocument()
+    }
+    expect(container.querySelector(`a[href="${siteConfig.guidestar.profileUrl}"]`)).not.toBeNull()
+    expect(container.innerHTML).not.toMatch(/46-2471893|5202228104|Raleigh|State College|bbbe173a/)
+  })
+
+  it('always renders the permanent "Supported by" attribution', () => {
+    render(<Footer />)
+    expect(screen.getByText(/All Rights Are Reserved/)).toHaveTextContent(
+      `Supported by ${siteConfig.supportedBy.name}`
+    )
   })
 
   it('should not have accessibility violations', async () => {
