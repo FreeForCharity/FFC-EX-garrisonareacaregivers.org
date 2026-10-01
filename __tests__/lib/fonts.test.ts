@@ -45,7 +45,16 @@ const allFonts: Record<string, Loaded> = {
 describe('fonts module exports', () => {
   it('exports exactly the eight expected font instances', () => {
     expect(Object.keys(allFonts).sort()).toEqual(
-      ['cantataOne', 'cinzel', 'faunaOne', 'faustina', 'lato', 'montserrat', 'openSans', 'raleway'].sort()
+      [
+        'cantataOne',
+        'cinzel',
+        'faunaOne',
+        'faustina',
+        'lato',
+        'montserrat',
+        'openSans',
+        'raleway',
+      ].sort()
     )
   })
 
